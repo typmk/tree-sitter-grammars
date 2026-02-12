@@ -1,0 +1,21 @@
+{
+  "grammars": [
+    {
+      "name": "jasmin",
+      "path": ".",
+      "scope": "source.jasmin",
+      "file-types": ["j", "jasmin"],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^jasmin$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Jasmin JVM bytecode assembler",
+    "authors": [{"name": "Defnet Contributors"}],
+    "links": {
+      "repository": "https://github.com/hbtweb/defnet"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "grammars": [
+    {
+      "name": "graal_ir",
+      "path": ".",
+      "scope": "source.graal",
+      "file-types": ["graal", "hir", "lir"],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^graal(_ir)?$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Graal compiler IR",
+    "authors": [{"name": "Defnet Contributors"}],
+    "links": {
+      "repository": "https://github.com/hbtweb/defnet"
+    }
+  }
+}

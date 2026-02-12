@@ -1,0 +1,21 @@
+{
+  "grammars": [
+    {
+      "name": "cil",
+      "path": ".",
+      "scope": "source.cil",
+      "file-types": ["il", "cil", "msil"],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^(cil|msil|il)$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for CIL/MSIL .NET bytecode",
+    "authors": [{"name": "Defnet Contributors"}],
+    "links": {
+      "repository": "https://github.com/hbtweb/defnet"
+    }
+  }
+}

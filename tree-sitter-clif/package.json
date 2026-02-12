@@ -1,0 +1,43 @@
+{
+  "name": "tree-sitter-clif",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for Cranelift IR (CLIF)",
+  "main": "bindings/node",
+  "types": "bindings/node",
+  "scripts": {
+    "build": "tree-sitter generate && tree-sitter build --wasm",
+    "test": "tree-sitter test",
+    "generate": "tree-sitter generate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hbtweb/defnet"
+  },
+  "author": "Defnet Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^8.0.0",
+    "node-gyp-build": "^4.8.0"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.21.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25.10"
+  },
+  "files": [
+    "grammar.js",
+    "binding.gyp",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
+  "keywords": [
+    "parser",
+    "cranelift",
+    "clif",
+    "ir",
+    "wasmtime",
+    "tree-sitter"
+  ]
+}

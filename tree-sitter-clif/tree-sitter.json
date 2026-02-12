@@ -1,0 +1,21 @@
+{
+  "grammars": [
+    {
+      "name": "clif",
+      "path": ".",
+      "scope": "source.clif",
+      "file-types": ["clif"],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^clif$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Cranelift IR",
+    "authors": [{"name": "Defnet Contributors"}],
+    "links": {
+      "repository": "https://github.com/hbtweb/defnet"
+    }
+  }
+}
