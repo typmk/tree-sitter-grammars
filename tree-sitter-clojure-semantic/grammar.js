@@ -15,6 +15,26 @@
 const SYMBOL_CHAR = /[a-zA-Z_*+!\-'?<>=.]/;
 const SYMBOL_CHAR_CONT = /[a-zA-Z0-9_*+!\-'?<>=.#:]/;
 
+/**
+ * Metadata written BEFORE a definition's name: (ns ^:no-doc my.ns ...),
+ * (defn ^:private f ...), (def ^:const x 1).
+ *
+ * This cannot be `repeat($.metadata)`. The `metadata` rule is
+ * `^<meta> <form>` — it CONSUMES the form it decorates, so it would
+ * swallow the very symbol the `name` field needs and the rule would not
+ * match. Inlining just the marker leaves the name where the field can
+ * still bind it.
+ *
+ * Without this, a def form carrying metadata failed its semantic rule
+ * and fell back to a generic list: no ns_form node at all, so the
+ * namespace came out null and every definition in the file indexed
+ * unqualified and unfindable.
+ */
+const metaPrefix = $ => repeat(seq(
+  choice('^', '#^'),
+  choice($.keyword, $.map, $.symbol, $.string)
+));
+
 module.exports = grammar({
   name: 'clojure_semantic',
 
@@ -122,6 +142,7 @@ module.exports = grammar({
 
     defn_form: $ => prec(10, seq(
       '(', 'defn',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       optional(field('meta', $.map)),
@@ -134,6 +155,7 @@ module.exports = grammar({
 
     defn_private_form: $ => prec(10, seq(
       '(', 'defn-',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       optional(field('meta', $.map)),
@@ -153,6 +175,7 @@ module.exports = grammar({
 
     def_form: $ => prec(10, seq(
       '(', 'def',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       optional(field('value', $._form)),
@@ -161,6 +184,7 @@ module.exports = grammar({
 
     defonce_form: $ => prec(10, seq(
       '(', 'defonce',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       optional(field('value', $._form)),
@@ -169,6 +193,7 @@ module.exports = grammar({
 
     defmacro_form: $ => prec(10, seq(
       '(', 'defmacro',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       optional(field('meta', $.map)),
@@ -181,6 +206,7 @@ module.exports = grammar({
 
     defmulti_form: $ => prec(10, seq(
       '(', 'defmulti',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       field('dispatch', $._form),
@@ -190,6 +216,7 @@ module.exports = grammar({
 
     defmethod_form: $ => prec(10, seq(
       '(', 'defmethod',
+      metaPrefix($),
       field('name', $.symbol),
       field('dispatch_val', $._form),
       field('params', $.vector),
@@ -199,6 +226,7 @@ module.exports = grammar({
 
     defprotocol_form: $ => prec(10, seq(
       '(', 'defprotocol',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       field('methods', repeat($.protocol_method)),
@@ -215,6 +243,7 @@ module.exports = grammar({
 
     defrecord_form: $ => prec(10, seq(
       '(', 'defrecord',
+      metaPrefix($),
       field('name', $.symbol),
       field('fields', $.vector),
       field('impls', repeat($._form)),
@@ -223,6 +252,7 @@ module.exports = grammar({
 
     deftype_form: $ => prec(10, seq(
       '(', 'deftype',
+      metaPrefix($),
       field('name', $.symbol),
       field('fields', $.vector),
       field('impls', repeat($._form)),
@@ -231,6 +261,7 @@ module.exports = grammar({
 
     ns_form: $ => prec(10, seq(
       '(', 'ns',
+      metaPrefix($),
       field('name', $.symbol),
       optional(field('docstring', $.string)),
       field('clauses', repeat($._form)),
