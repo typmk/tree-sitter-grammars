@@ -1,0 +1,16 @@
+{
+  "name": "@typmk/tree-sitter-grammars",
+  "version": "0.1.0",
+  "description": "Semantic Lisp and compiler-IR tree-sitter grammars, with prebuilt wasm",
+  "license": "MIT",
+  "author": "Apollo Nicolson",
+  "files": ["wasm", "tree-sitter-*"],
+  "scripts": {
+    "build": "node scripts/build-wasm.mjs",
+    "verify": "node scripts/verify-wasm.mjs"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "0.26.11",
+    "web-tree-sitter": "0.26.11"
+  }
+}

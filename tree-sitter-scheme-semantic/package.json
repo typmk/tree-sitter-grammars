@@ -52,5 +52,7 @@
         "sps"
       ]
     }
-  ]
+  ],
+  "license": "MIT",
+  "author": "Apollo Nicolson"
 }

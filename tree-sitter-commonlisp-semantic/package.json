@@ -44,5 +44,7 @@
         "asdf"
       ]
     }
-  ]
+  ],
+  "license": "MIT",
+  "author": "Apollo Nicolson"
 }

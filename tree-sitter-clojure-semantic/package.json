@@ -52,5 +52,7 @@
         "bb"
       ]
     }
-  ]
+  ],
+  "license": "MIT",
+  "author": "Apollo Nicolson"
 }

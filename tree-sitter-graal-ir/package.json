@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/hbtweb/defnet"
   },
-  "author": "Defnet Contributors",
+  "author": "Apollo Nicolson",
   "license": "MIT",
   "dependencies": {
     "node-addon-api": "^8.0.0",

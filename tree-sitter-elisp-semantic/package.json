@@ -45,5 +45,7 @@
         "elc"
       ]
     }
-  ]
+  ],
+  "license": "MIT",
+  "author": "Apollo Nicolson"
 }

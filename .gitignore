@@ -1,0 +1,12 @@
+node_modules/
+
+# Generated from grammar.js by `npm run build`, and rebuilt in CI.
+tree-sitter-*/src/
+tree-sitter-*/bindings/
+tree-sitter-*/build/
+
+# Only the collected artefacts in wasm/ are committed.
+*.wasm
+!wasm/*.wasm
+
+*.log

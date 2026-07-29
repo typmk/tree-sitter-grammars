@@ -1,0 +1,44 @@
+name: ci
+
+# Rebuilds every grammar from grammar.js and asserts the result LOADS.
+#
+# Building is not the interesting half. A wasm built by a different
+# tree-sitter release than the installed web-tree-sitter builds fine and then
+# throws from getDylinkMetadata at load time with an empty message. So the
+# gate is `verify`, which loads each artefact and parses a sample; the pinned
+# pair in package.json is what it is checking.
+#
+# The committed wasm/ is also checked for drift: a grammar.js change that is
+# not rebuilt would otherwise ship a stale parser while CI stayed green.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build every grammar
+        run: npm run build
+
+      - name: Every grammar loads and parses
+        run: npm run verify
+
+      - name: Committed wasm matches the sources
+        run: |
+          if ! git diff --quiet -- wasm; then
+            echo "::error title=Stale wasm::wasm/ does not match the grammars. Run 'npm run build' and commit the result."
+            git diff --stat -- wasm
+            exit 1
+          fi
+          echo "wasm/ is in sync with the grammar sources"

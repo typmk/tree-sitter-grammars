@@ -43,5 +43,7 @@
         "rktd"
       ]
     }
-  ]
+  ],
+  "license": "MIT",
+  "author": "Apollo Nicolson"
 }
