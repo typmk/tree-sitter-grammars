@@ -489,11 +489,19 @@ module.exports = grammar({
       ')'
     )),
 
+    // as-> appears in two shapes and the rule only modelled one. Standalone it
+    // is (as-> expr name body...), but as a STEP inside -> / cond-> the
+    // expression is threaded in and the form reads (as-> name body...). The
+    // second is idiomatic and was a parse error everywhere it appeared.
+    //
+    // Expressed as a permissive body rather than two alternatives, because
+    // (as-> a b) is genuinely ambiguous between them — a two-alternative rule
+    // makes tree-sitter report a conflict rather than choose. The fields are
+    // dropped with it; nothing reads them, since thread_as_form is classified
+    // as :threading and carries no name field to extract.
     thread_as_form: $ => prec(5, seq(
       '(', 'as->',
-      field('initial', $._form),
-      field('binding', $.symbol),
-      field('forms', repeat($._form)),
+      repeat($._form),
       ')'
     )),
 
@@ -567,11 +575,18 @@ module.exports = grammar({
       )
     )),
 
+    // A keyword MAY begin with a digit. :64, :32, :2d and :3d are all valid —
+    // the digit-start restriction belongs to symbols, not keywords, and this
+    // code compiles under shadow-cljs, which is the proof. Excluding 0-9 from
+    // the leading class made every one of them a parse error: 38 of the 47
+    // that survived the comment/%/catch fixes, concentrated in the arch tables
+    // of binary/elf.cljs and binary/disasm.cljs where :32 and :64 are the
+    // natural keys.
     keyword: $ => token(seq(
       ':',
       optional(':'),  // ::auto-resolved
       optional(seq(/[a-zA-Z_*+!\-'?<>=][a-zA-Z0-9_*+!\-'?<>=.]*/, '/')),
-      /[a-zA-Z_*+!\-'?<>=.][a-zA-Z0-9_*+!\-'?<>=.]*/
+      /[a-zA-Z0-9_*+!\-'?<>=.][a-zA-Z0-9_*+!\-'?<>=.]*/
     )),
 
     string: $ => token(seq(
