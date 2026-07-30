@@ -38,7 +38,13 @@ const metaPrefix = $ => repeat(seq(
 module.exports = grammar({
   name: 'clojure_semantic',
 
-  extras: $ => [/[\s,]+/],
+  // Comments belong in extras, not only at source level. Defined but excluded,
+  // they parsed only BETWEEN top-level forms — and a comment inside a defn body
+  // is where most Clojure comments actually live, so every one of them was a
+  // parse error. Measured on defnet: 299 of ~420 sampled ERROR nodes opened
+  // with ';' or ';;', and a form containing an error is dropped from the index
+  // silently. #_ discard is an extra for the same reason.
+  extras: $ => [/[\s,]+/, $.comment, $.discard],
 
   externals: $ => [],
 
@@ -52,6 +58,11 @@ module.exports = grammar({
     // =========================================================================
 
     _form: $ => choice(
+      // % / %1 / %& at any depth. It was reachable only from the immediate body
+      // of #(...), so `#(f (g %))` — the % one level in — was an error. 76 of
+      // the sampled ERROR nodes opened with '%'.
+      $.anon_arg,
+
       // Definition forms (highest precedence)
       $.defn_form,
       $.defn_private_form,
@@ -437,7 +448,12 @@ module.exports = grammar({
 
     catch_clause: $ => seq(
       '(', 'catch',
-      field('exception_type', $.symbol),
+      // ClojureScript catches on a KEYWORD as often as a symbol —
+      // (catch :default e ...) is the idiomatic catch-all, and this grammar
+      // ships for .cljs. Requiring a symbol made every one of them a parse
+      // error: 88 of the 135 remaining ERROR nodes in defnet's own source,
+      // and defnet is written in ClojureScript.
+      field('exception_type', choice($.symbol, $.keyword)),
       field('binding', $.symbol),
       field('body', repeat($._form)),
       ')'
@@ -622,7 +638,10 @@ module.exports = grammar({
     // #(... % %1 %2 %&)
     anonymous_fn: $ => seq(
       '#(',
-      repeat(choice($._form, $.anon_arg)),
+      // $._form now includes anon_arg, so listing it again here makes the
+      // parse ambiguous — tree-sitter reports a conflict between _form and
+      // anonymous_fn_repeat1. One path only.
+      repeat($._form),
       ')'
     ),
 
