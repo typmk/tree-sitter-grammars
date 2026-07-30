@@ -53,9 +53,10 @@ The CI here pins both to one version for that reason.
 To rebuild:
 
 ```sh
-npm install
-npm run build          # every grammar -> wasm/
-npm run build -- cil   # just one
+bun install
+bun run build          # every grammar -> wasm/
+bun run build cil      # just one
+bun run verify         # every wasm loads and parses
 ```
 
 Run those from the repo root. If you invoke the CLI by hand, note that
@@ -63,7 +64,7 @@ Run those from the repo root. If you invoke the CLI by hand, note that
 `Failed to run wasi-sdk clang -- No such file or directory` — which names
 the toolchain rather than the missing input. `generate` writes `src/`
 relative to the working directory, so it has to run *inside* the grammar
-directory while `build` runs from the root. `npm run build` does both in
+directory while `build` runs from the root. `bun run build` does both in
 that order.
 
 ## Layout

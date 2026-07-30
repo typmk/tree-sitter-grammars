@@ -60,7 +60,7 @@ jobs:
       - name: Committed wasm matches the sources
         run: |
           if ! git diff --quiet -- wasm; then
-            echo "::error title=Stale wasm::wasm/ does not match the grammars. Run 'npm run build' and commit the result."
+            echo "::error title=Stale wasm::wasm/ does not match the grammars. Run 'bun run build' and commit the result."
             git diff --stat -- wasm
             exit 1
           fi
