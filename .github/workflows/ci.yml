@@ -21,24 +21,41 @@ jobs:
     steps:
       # Newest majors, not the oldest that clears the "Node.js 20 is
       # deprecated … forced to run on Node.js 24" annotation. node24 first
-      # appears in v5 of both actions, so v5 would have sufficed; v7 costs
-      # nothing more and does not need revisiting. setup-node v5 added
-      # package-manager detection and v6 narrowed auto-caching to npm —
-      # neither applies, `cache: npm` is explicit.
+      # appears in v5, so v5 would have sufficed; the newest costs nothing more
+      # and does not need revisiting. setup-bun v2 is on node24 too.
       - uses: actions/checkout@v7
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Node is here for one step only — verifying the artefacts load under the
+      # runtime consumers use. Nothing is built with it.
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
 
-      - run: npm ci
+      - run: bun install --frozen-lockfile
 
+      # bun only orchestrates: the wasm is produced by the tree-sitter CLI,
+      # which is the same native binary whichever runtime invoked it. Checked
+      # rather than assumed — all 9 grammars rebuilt under bun came out
+      # byte-identical to the committed artefacts, which is what makes the
+      # drift check below meaningful after this change.
       - name: Build every grammar
-        run: npm run build
+        run: bun run build
 
-      - name: Every grammar loads and parses
-        run: npm run verify
+      # The load gate, and the reason this repo exists as a repo: a wasm built
+      # by a different tree-sitter release than the installed web-tree-sitter
+      # builds fine and then throws from getDylinkMetadata with an empty
+      # message. Run under both runtimes — defnet consumes these from bun, and
+      # anything else consuming the published package will use node. Measured:
+      # 9 grammars load and parse under each.
+      - name: Every grammar loads and parses (bun)
+        run: bun run verify
+
+      - name: Every grammar loads and parses (node)
+        run: bun run verify:node
 
       - name: Committed wasm matches the sources
         run: |
