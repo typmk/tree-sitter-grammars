@@ -19,9 +19,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # Newest majors, not the oldest that clears the "Node.js 20 is
+      # deprecated … forced to run on Node.js 24" annotation. node24 first
+      # appears in v5 of both actions, so v5 would have sufficed; v7 costs
+      # nothing more and does not need revisiting. setup-node v5 added
+      # package-manager detection and v6 narrowed auto-caching to npm —
+      # neither applies, `cache: npm` is explicit.
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
