@@ -15,7 +15,7 @@
     "description": "Tree-sitter grammar for Cranelift IR",
     "authors": [{"name": "Defnet Contributors"}],
     "links": {
-      "repository": "https://github.com/hbtweb/defnet"
+      "repository": "https://github.com/typmk/tree-sitter-grammars"
     }
   }
 }
